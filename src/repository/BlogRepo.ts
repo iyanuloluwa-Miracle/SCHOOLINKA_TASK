@@ -6,75 +6,80 @@ interface INoteRepo {
   delete(blogId: number): Promise<void>;
   retrieveById(blogId: number): Promise<Blog>;
   retrieveAll(): Promise<Blog[]>;
+  
 }
 
 export class BlogRepo implements INoteRepo {
-
   async save(blog: Blog): Promise<void> {
     try {
       await Blog.create({
-        name: Blog.name,
-        description: Blog.description,
+        title: blog.title,
+        content: blog.content,
+        author: blog.author,
       });
     } catch (error) {
       throw new Error("Failed to create Blog Post!");
     }
   }
-  async update(note: Note): Promise<void> {
-    try {
-      const new_note = await Note.findOne({
-        where: {
-          id: note.id,
-        },
-      });
-      if (!new_note) {
-        throw new Error("Note not found!");
-      }
-      new_note.name = note.name;
-      new_note.description = note.description;
 
-      await new_note.save();
-    } catch (error) {
-      throw new Error("Failed to create note!");
-    }
-  }
-  async delete(noteId: number): Promise<void> {
+  async update(blog: Blog): Promise<void> {
     try {
-      const new_note = await Note.findOne({
+      const existingBlog = await Blog.findOne({
         where: {
-          id: noteId,
+          id: blog.id,
         },
       });
-      if (!new_note) {
-        throw new Error("Note not found!");
+      if (!existingBlog) {
+        throw new Error("Blog not found!");
+      }
+      existingBlog.title = blog.title;
+      existingBlog.content = blog.content;
+      existingBlog.author = blog.author;
+
+      await existingBlog.save();
+    } catch (error) {
+      throw new Error("Failed to update Blog!");
+    }
+  }
+
+  async delete(blogId: number): Promise<void> {
+    try {
+      const existingBlog = await Blog.findOne({
+        where: {
+          id: blogId,
+        },
+      });
+      if (!existingBlog) {
+        throw new Error("Blog not found!");
       }
 
-      await new_note.destroy();
+      await existingBlog.destroy();
     } catch (error) {
-      throw new Error("Failed to create note!");
+      throw new Error("Failed to delete Blog!");
     }
   }
-  async retrieveById(noteId: number): Promise<Note> {
+
+  async retrieveById(blogId: number): Promise<Blog> {
     try {
-      const new_note = await Note.findOne({
+      const existingBlog = await Blog.findOne({
         where: {
-          id: noteId,
+          id: blogId,
         },
       });
-      if (!new_note) {
-        throw new Error("Note not found!");
+      if (!existingBlog) {
+        throw new Error("Blog not found!");
       }
-      return new_note;
+      return existingBlog;
     } catch (error) {
-      throw new Error("Failed to create note!");
+      throw new Error("Failed to retrieve Blog!");
     }
   }
-  async retrieveAll(): Promise<Note[]> {
+
+  async retrieveAll(): Promise<Blog[]> {
     try {
-     return await Note.findAll();
+      return await Blog.findAll();
     } catch (error) {
-      throw new Error("Failed to create note!");
+      throw new Error("Failed to retrieve Blog!");
     }
   }
-  
 }

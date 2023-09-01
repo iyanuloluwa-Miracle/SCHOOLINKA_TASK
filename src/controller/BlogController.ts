@@ -28,7 +28,7 @@ class BlogController {
 
   async delete(req: Request, res: Response) {
     try {
-      let id = parseInt(req.params["id"]);
+      const id = parseInt(req.params["id"]);
       await new BlogRepo().delete(id);
 
       res.status(200).json({
@@ -45,7 +45,7 @@ class BlogController {
 
   async findById(req: Request, res: Response) {
     try {
-      let id = parseInt(req.params["id"]);
+      const id = parseInt(req.params["id"]);
       const blogPost = await new BlogRepo().retrieveById(id);
 
       res.status(200).json({
@@ -61,37 +61,37 @@ class BlogController {
     }
   }
 
-  async findAll(req: Request, res: Response) {
-    try {
-      const page = parseInt(req.query.page as string) || 1;
-      const search = req.query.search as string || "";
+  // async findAll(req: Request, res: Response) {
+  //   try {
+  //     const page = parseInt(req.query.page as string) || 1;
+  //     const search = req.query.search as string || "";
 
-      const notesPerPage = 10;
-      const offset = (page - 1) * notesPerPage;
+  //     const notesPerPage = 10;
+  //     const offset = (page - 1) * notesPerPage;
 
-      const { count, rows } = await new BlogRepo().retrieveAllPaginated(
-        notesPerPage,
-        offset,
-        search
-      );
+  //     const { count, rows } = await new BlogRepo().retrieveAllPaginated(
+  //       notesPerPage,
+  //       offset,
+  //       search
+  //     );
 
-      res.status(200).json({
-        status: "Ok!",
-        message: "Successfully fetched paginated blog posts!",
-        data: rows,
-        total: count,
-      });
-    } catch (err) {
-      res.status(500).json({
-        status: "Internal Server Error!",
-        message: "Internal Server Error!",
-      });
-    }
-  }
+  //     res.status(200).json({
+  //       status: "Ok!",
+  //       message: "Successfully fetched paginated blog posts!",
+  //       data: rows,
+  //       total: count,
+  //     });
+  //   } catch (err) {
+  //     res.status(500).json({
+  //       status: "Internal Server Error!",
+  //       message: "Internal Server Error!",
+  //     });
+  //   }
+  // }
 
   async update(req: Request, res: Response) {
     try {
-      let id = parseInt(req.params["id"]);
+      const id = parseInt(req.params["id"]);
       const updated_note = new Blog();
 
       updated_note.id = id;
