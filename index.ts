@@ -26,11 +26,11 @@ class App {
     this.app.route("/").get((req: Request, res: Response) => {
       res.send("welcome home");
     });
-    this.app.use("/api/v1/note", BlogRouter);
+    this.app.use("/api/v1/blog", BlogRouter);
   }
 }
 
-const port: number = 8000;
+const port: number = 4000;
 const app = new App().app;
 
 app.listen(port, () => {

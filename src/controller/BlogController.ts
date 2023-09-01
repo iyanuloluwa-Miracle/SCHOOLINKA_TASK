@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { Blog } from "../model/Blogs";
 import { BlogRepo } from "../repository/BlogRepo";
-import validate from "../helper/validate";
-import { createBlogSchema, updateBlogSchema } from "../schema/BlogSchema";
+// import validate from "../helper/validate";
+// import { createBlogSchema, updateBlogSchema } from "../schema/BlogSchema";
 
 class BlogController {
   async create(req: Request, res: Response) {
@@ -61,33 +61,22 @@ class BlogController {
     }
   }
 
-  // async findAll(req: Request, res: Response) {
-  //   try {
-  //     const page = parseInt(req.query.page as string) || 1;
-  //     const search = req.query.search as string || "";
+  async findAll(req: Request, res: Response) {
+    try {
+      const new_blog = await new BlogRepo().retrieveAll();
 
-  //     const notesPerPage = 10;
-  //     const offset = (page - 1) * notesPerPage;
-
-  //     const { count, rows } = await new BlogRepo().retrieveAllPaginated(
-  //       notesPerPage,
-  //       offset,
-  //       search
-  //     );
-
-  //     res.status(200).json({
-  //       status: "Ok!",
-  //       message: "Successfully fetched paginated blog posts!",
-  //       data: rows,
-  //       total: count,
-  //     });
-  //   } catch (err) {
-  //     res.status(500).json({
-  //       status: "Internal Server Error!",
-  //       message: "Internal Server Error!",
-  //     });
-  //   }
-  // }
+      res.status(200).json({
+        status: "Ok!",
+        message: "Successfully fetched all note data!",
+        data: new_blog,
+      });
+    } catch (err) {
+      res.status(500).json({
+        status: "Internal Server Error!",
+        message: "Internal Server Error!",
+      });
+    }
+  }
 
   async update(req: Request, res: Response) {
     try {
