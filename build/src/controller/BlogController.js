@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Blogs_1 = require("../model/Blogs");
 const BlogRepo_1 = require("../repository/BlogRepo");
+const sequelize_1 = require("sequelize");
 // import validate from "../helper/validate";
 // import { createBlogSchema, updateBlogSchema } from "../schema/BlogSchema";
 class BlogController {
@@ -109,6 +110,41 @@ class BlogController {
                 res.status(500).json({
                     status: "Internal Server Error!",
                     message: "Internal Server Error!",
+                });
+            }
+        });
+    }
+    findAllPaginated(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const page = parseInt(req.query.page) || 1;
+                const search = req.query.search || "";
+                const pageSize = 5;
+                // Calculate the offset based on the page number
+                const offset = (page - 1) * pageSize;
+                // Use Sequelize to fetch paginated and filtered data
+                const { count, rows } = yield Blogs_1.Blog.findAndCountAll({
+                    where: {
+                        [sequelize_1.Op.or]: [
+                            { title: { [sequelize_1.Op.iLike]: `%${search}%` } },
+                            { content: { [sequelize_1.Op.iLike]: `%${search}%` } },
+                            { author: { [sequelize_1.Op.iLike]: `%${search}%` } }, // Case-insensitive search by author
+                        ],
+                    },
+                    offset,
+                    limit: pageSize,
+                });
+                res.status(200).json({
+                    status: "Ok",
+                    message: "Successfully fetched paginated blog posts",
+                    data: rows,
+                    total: count,
+                });
+            }
+            catch (error) {
+                res.status(500).json({
+                    status: "Internal Server Error",
+                    message: "Failed to retrieve paginated blog posts",
                 });
             }
         });

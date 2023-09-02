@@ -11,6 +11,7 @@ class BlogRoutes extends BaseRoutes {
       this.router.post("", validate(createBlogSchema), BlogController.create);
       this.router.patch("/:id", validate(updateBlogSchema), BlogController.update);
       this.router.delete("/:id", BlogController.delete);
+      this.router.get("/paginated", BlogController.findAllPaginated);
     }
 }
 

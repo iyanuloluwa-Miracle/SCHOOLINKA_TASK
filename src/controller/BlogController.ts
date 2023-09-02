@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Blog } from "../model/Blogs";
 import { BlogRepo } from "../repository/BlogRepo";
+import { Op } from "sequelize"; 
 // import validate from "../helper/validate";
 // import { createBlogSchema, updateBlogSchema } from "../schema/BlogSchema";
 
@@ -76,7 +77,7 @@ class BlogController {
         message: "Internal Server Error!",
       });
     }
-  }
+   }
 
   async update(req: Request, res: Response) {
     try {
@@ -101,6 +102,43 @@ class BlogController {
       });
     }
   }
+
+  async findAllPaginated(req: Request, res: Response) {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const search = req.query.search as string || "";
+      const pageSize = 5;
+
+      // Calculate the offset based on the page number
+      const offset = (page - 1) * pageSize;
+
+      // Use Sequelize to fetch paginated and filtered data
+      const { count, rows } = await Blog.findAndCountAll({
+        where: {
+          [Op.or]: [
+            { title: { [Op.iLike]: `%${search}%` } }, // Case-insensitive search by title
+            { content: { [Op.iLike]: `%${search}%` } }, // Case-insensitive search by content
+            { author: { [Op.iLike]: `%${search}%` } }, // Case-insensitive search by author
+          ],
+        },
+        offset,
+        limit: pageSize,
+      });
+
+      res.status(200).json({
+        status: "Ok",
+        message: "Successfully fetched paginated blog posts",
+        data: rows,
+        total: count,
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: "Internal Server Error",
+        message: "Failed to retrieve paginated blog posts",
+      });
+    }
+  }
+  
 }
 
 export default new BlogController();

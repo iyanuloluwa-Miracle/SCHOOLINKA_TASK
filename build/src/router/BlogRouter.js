@@ -14,6 +14,7 @@ class BlogRoutes extends BaseRouter_1.default {
         this.router.post("", (0, validate_1.default)(BlogSchema_1.createBlogSchema), BlogController_1.default.create);
         this.router.patch("/:id", (0, validate_1.default)(BlogSchema_1.updateBlogSchema), BlogController_1.default.update);
         this.router.delete("/:id", BlogController_1.default.delete);
+        this.router.get("/paginated", BlogController_1.default.findAllPaginated);
     }
 }
 exports.default = new BlogRoutes().router;
