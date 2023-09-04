@@ -33,6 +33,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
+const pg_1 = require("pg");
 const dotenv = __importStar(require("dotenv"));
 const Blogs_1 = require("../model/Blogs");
 dotenv.config();
@@ -42,12 +43,16 @@ class Database {
         this.POSTGRES_HOST = process.env.POSTGRES_HOST;
         this.POSTGRES_PORT = process.env.POSTGRES_PORT;
         this.POSTGRES_USER = process.env.POSTGRES_USER;
-        this.POSTGRES_PASSWORD = process.env
-            .POSTGRES_PASSWORD;
+        this.POSTGRES_PASSWORD = process.env.POSTGRES_PASSWORD;
         this.connectToPostgreSQL();
     }
     connectToPostgreSQL() {
         return __awaiter(this, void 0, void 0, function* () {
+            const pgPool = new pg_1.Pool({
+                connectionString: process.env.POSTGRES_URL + "?sslmode=require",
+            });
+            const { rows } = yield pgPool.query('SELECT NOW()');
+            console.log('PostgreSQL is connected:', rows[0].now);
             this.sequelize = new sequelize_typescript_1.Sequelize({
                 database: this.POSTGRES_DB,
                 username: this.POSTGRES_USER,
@@ -55,7 +60,7 @@ class Database {
                 host: this.POSTGRES_HOST,
                 port: this.POSTGRES_PORT,
                 dialect: "postgres",
-                models: [Blogs_1.Blog]
+                models: [Blogs_1.Blog],
             });
             yield this.sequelize
                 .authenticate()
