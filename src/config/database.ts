@@ -1,7 +1,8 @@
 import { Sequelize } from "sequelize-typescript";
-import { Pool } from 'pg';
+// import { Pool } from 'pg'; // Uncomment if needed
 import * as dotenv from "dotenv";
 import { Blog } from "../model/Blogs";
+
 dotenv.config();
 
 class Database {
@@ -17,6 +18,8 @@ class Database {
     this.connectToPostgreSQL();
   }
 
+  // Uncomment the following code if you need to use the 'pg' library
+  /*
   private async connectToPostgreSQL() {
     const pgPool = new Pool({
       connectionString: process.env.POSTGRES_URL + "?sslmode=require",
@@ -24,7 +27,10 @@ class Database {
 
     const { rows } = await pgPool.query('SELECT NOW()');
     console.log('PostgreSQL is connected:', rows[0].now);
+  }
+  */
 
+  private async connectToPostgreSQL() {
     this.sequelize = new Sequelize({
       database: this.POSTGRES_DB,
       username: this.POSTGRES_USER,
@@ -35,14 +41,12 @@ class Database {
       models: [Blog],
     });
 
-    await this.sequelize
-      .authenticate()
-      .then(() => {
-        console.log("✅ PostgreSQL Connection has been established successfully.");
-      })
-      .catch((err) => {
-        console.error("❌ Unable to connect to the PostgreSQL database:", err);
-      });
+    try {
+      await this.sequelize.authenticate();
+      console.log("✅ PostgreSQL Connection has been established successfully.");
+    } catch (err) {
+      console.error("❌ Unable to connect to the PostgreSQL database:", err);
+    }
   }
 }
 

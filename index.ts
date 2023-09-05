@@ -24,7 +24,7 @@ class App {
 
   protected routes(): void {
     this.app.route("/").get((req: Request, res: Response) => {
-      res.send("welcome home");
+      res.send({message: 'Awesome it works 🐻'});
     });
     this.app.use("/api/v1/blog", BlogRouter);
   }
