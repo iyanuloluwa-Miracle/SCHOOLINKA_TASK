@@ -8,7 +8,7 @@ dotenv.config();
 class Database {
   public sequelize: Sequelize | undefined;
 
-  private POSTGRES_DB = process.env.POSTGRES_DB as string;
+  private POSTGRES_DATABASE = process.env.POSTGRES_DB as string;
   private POSTGRES_HOST = process.env.POSTGRES_HOST as string;
   private POSTGRES_PORT = process.env.POSTGRES_PORT as unknown as number;
   private POSTGRES_USER = process.env.POSTGRES_USER as unknown as string;
@@ -32,7 +32,7 @@ class Database {
 
   private async connectToPostgreSQL() {
     this.sequelize = new Sequelize({
-      database: this.POSTGRES_DB,
+      database: this.POSTGRES_DATABASE,
       username: this.POSTGRES_USER,
       password: this.POSTGRES_PASSWORD,
       host: this.POSTGRES_HOST,
