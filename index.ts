@@ -30,7 +30,7 @@ class App {
   }
 }
 
-const port: number = 4000;
+const port: number = 3000;
 const app = new App().app;
 
 app.listen(port, () => {
