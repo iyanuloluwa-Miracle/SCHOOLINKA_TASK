@@ -24,7 +24,7 @@ class App {
     }
     routes() {
         this.app.route("/").get((req, res) => {
-            res.send("welcome home");
+            res.send({ message: 'Awesome it works 🐻' });
         });
         this.app.use("/api/v1/blog", BlogRouter_1.default);
     }

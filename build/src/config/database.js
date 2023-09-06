@@ -33,28 +33,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_typescript_1 = require("sequelize-typescript");
-const pg_1 = require("pg");
+// import { Pool } from 'pg'; // Uncomment if needed
 const dotenv = __importStar(require("dotenv"));
 const Blogs_1 = require("../model/Blogs");
 dotenv.config();
 class Database {
     constructor() {
-        this.POSTGRES_DB = process.env.POSTGRES_DB;
+        this.POSTGRES_DATABASE = process.env.POSTGRES_DB;
         this.POSTGRES_HOST = process.env.POSTGRES_HOST;
         this.POSTGRES_PORT = process.env.POSTGRES_PORT;
         this.POSTGRES_USER = process.env.POSTGRES_USER;
         this.POSTGRES_PASSWORD = process.env.POSTGRES_PASSWORD;
         this.connectToPostgreSQL();
     }
+    // Uncomment the following code if you need to use the 'pg' library
+    /*
+    private async connectToPostgreSQL() {
+      const pgPool = new Pool({
+        connectionString: process.env.POSTGRES_URL + "?sslmode=require",
+      });
+  
+      const { rows } = await pgPool.query('SELECT NOW()');
+      console.log('PostgreSQL is connected:', rows[0].now);
+    }
+    */
     connectToPostgreSQL() {
         return __awaiter(this, void 0, void 0, function* () {
-            const pgPool = new pg_1.Pool({
-                connectionString: process.env.POSTGRES_URL + "?sslmode=require",
-            });
-            const { rows } = yield pgPool.query('SELECT NOW()');
-            console.log('PostgreSQL is connected:', rows[0].now);
             this.sequelize = new sequelize_typescript_1.Sequelize({
-                database: this.POSTGRES_DB,
+                database: this.POSTGRES_DATABASE,
                 username: this.POSTGRES_USER,
                 password: this.POSTGRES_PASSWORD,
                 host: this.POSTGRES_HOST,
@@ -62,14 +68,13 @@ class Database {
                 dialect: "postgres",
                 models: [Blogs_1.Blog],
             });
-            yield this.sequelize
-                .authenticate()
-                .then(() => {
+            try {
+                yield this.sequelize.authenticate();
                 console.log("✅ PostgreSQL Connection has been established successfully.");
-            })
-                .catch((err) => {
+            }
+            catch (err) {
                 console.error("❌ Unable to connect to the PostgreSQL database:", err);
-            });
+            }
         });
     }
 }
